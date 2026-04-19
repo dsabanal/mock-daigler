@@ -12,7 +12,6 @@ export default function EditAssignmentPage() {
   const { assignments, loading, submitAssignment, removeSubmission } = useAssignmentStore();
   const assignment = assignments.find((a) => a.id === id);
 
-  // Local state for immediate UI feedback
   const [comment, setComment] = useState("");
   const [newFileName, setNewFileName] = useState("");
 
@@ -34,7 +33,8 @@ export default function EditAssignmentPage() {
       comment: currentComment
     });
 
-    router.push("/assignments");
+    // Return to the assignment detail page after saving
+    router.push(`/assignments/${id}`);
     return { success: true };
   }
 
@@ -43,7 +43,7 @@ export default function EditAssignmentPage() {
   const handleRemove = () => {
     if (confirm("Are you sure you want to remove this submission? This will revert the status to Pending and remove it from your activity.")) {
       removeSubmission(id);
-      router.push("/assignments");
+      router.push(`/assignments/${id}`);
     }
   };
 
@@ -54,8 +54,8 @@ export default function EditAssignmentPage() {
     return (
       <div className="p-8 text-center space-y-4">
         <p className="text-stone-600 font-medium">This assignment hasn't been submitted yet.</p>
-        <Link href={`/assignments/${id}/submit`} className="text-[#F9A825] font-bold hover:underline">
-          Go to Submission Page
+        <Link href={`/assignments/${id}`} className="text-[#F9A825] font-bold hover:underline">
+          ← Back to Assignment
         </Link>
       </div>
     );
@@ -66,6 +66,8 @@ export default function EditAssignmentPage() {
       {/* Breadcrumbs */}
       <nav className="text-sm text-stone-500">
         <Link href="/assignments" className="hover:underline">Assignments</Link>
+        <span className="mx-2">/</span>
+        <Link href={`/assignments/${id}`} className="hover:underline">{assignment.title}</Link>
         <span className="mx-2">/</span>
         <span className="text-stone-900 font-medium">Edit Submission</span>
       </nav>
@@ -131,8 +133,9 @@ export default function EditAssignmentPage() {
             >
               {isPending ? "Saving..." : "Save Changes"}
             </button>
+            {/* Cancel returns to the assignment detail page */}
             <Link 
-              href="/assignments" 
+              href={`/assignments/${id}`}
               className="px-8 py-4 bg-stone-100 text-stone-600 font-bold rounded-2xl hover:bg-stone-200 transition-all text-center"
             >
               Cancel
