@@ -35,10 +35,21 @@ function GuidelinesContent() {
     <div className="p-8 max-w-5xl mx-auto space-y-8">
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center space-x-2 text-sm font-medium text-stone-400">
-        <Link href="/exams" className="hover:text-stone-600 transition-colors">Upcoming Exams</Link>
+        <Link href="/exams" className="hover:text-stone-600 transition-colors">
+          Upcoming Exams
+        </Link>
+
         <span>/</span>
-        <span className="text-stone-400">{exam.title}</span>
+
+        <Link
+          href={`/exams?type=${type}`}
+          className="hover:text-stone-600 transition-colors"
+        >
+          {exam.title}
+        </Link>
+
         <span>/</span>
+
         <span className="text-stone-800 font-bold">Guidelines</span>
       </nav>
 
