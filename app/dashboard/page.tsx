@@ -85,6 +85,50 @@ const announcements: Announcement[] = [
   },
 ];
 
+function DashboardCourseItem({ course }: { course: Course }) {
+  return (
+    <div
+      key={course.id}
+      className="min-w-[320px] bg-white rounded-3xl border border-stone-100 shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group cursor-pointer overflow-hidden"
+    >
+      <div className="h-40 overflow-hidden relative">
+        <Image
+          src={course.thumbnail}
+          alt={course.title}
+          width={1024}
+          height={1024}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        <div className="absolute top-4 left-4">
+          <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider text-stone-700 shadow-sm">
+            {course.instructor}
+          </span>
+        </div>
+      </div>
+      <div className="p-6">
+        <h4 className="font-bold text-stone-800 text-lg leading-tight mb-4 group-hover:text-[#F9A825] transition-colors">
+          {course.title}
+        </h4>
+
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm mb-1">
+            <span className="text-stone-400 font-medium tracking-wide">
+              PROGRESS
+            </span>
+            <span className="text-stone-900 font-bold">{course.progress}%</span>
+          </div>
+          <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
+            <div
+              className={`h-full ${course.color} transition-all duration-1000 ease-out`}
+              style={{ width: `${course.progress}%` }}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DashboardCourseOverview() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("title");
@@ -150,47 +194,10 @@ function DashboardCourseOverview() {
       </div>
       <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide">
         {processedCourses.map((course) => (
-          <div
+          <DashboardCourseItem
             key={course.id}
-            className="min-w-[320px] bg-white rounded-3xl border border-stone-100 shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group cursor-pointer overflow-hidden"
-          >
-            <div className="h-40 overflow-hidden relative">
-              <Image
-                src={course.thumbnail}
-                alt={course.title}
-                width={1024}
-                height={1024}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute top-4 left-4">
-                <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider text-stone-700 shadow-sm">
-                  {course.instructor}
-                </span>
-              </div>
-            </div>
-            <div className="p-6">
-              <h4 className="font-bold text-stone-800 text-lg leading-tight mb-4 group-hover:text-[#F9A825] transition-colors">
-                {course.title}
-              </h4>
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-stone-400 font-medium tracking-wide">
-                    PROGRESS
-                  </span>
-                  <span className="text-stone-900 font-bold">
-                    {course.progress}%
-                  </span>
-                </div>
-                <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full ${course.color} transition-all duration-1000 ease-out`}
-                    style={{ width: `${course.progress}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+            course={course}
+          />
         ))}
         {processedCourses.length === 0 && (
           <div className="w-full py-12 text-center bg-stone-50 rounded-3xl border border-dashed border-stone-200">
@@ -204,7 +211,33 @@ function DashboardCourseOverview() {
   );
 }
 
-function AnnouncementWidget() {
+function DashboardAnnouncementItem({
+  announcement,
+}: {
+  announcement: Announcement;
+}) {
+  return (
+    <div
+      key={announcement.id}
+      className="group cursor-pointer"
+    >
+      <div className="flex justify-between items-start mb-1">
+        <h4 className="text-sm font-bold text-stone-800 group-hover:text-[#F9A825] transition-colors">
+          {announcement.title}
+        </h4>
+        <span className="text-[10px] font-semibold text-stone-400 uppercase">
+          {announcement.date}
+        </span>
+      </div>
+      <p className="text-xs text-stone-500 line-clamp-2 leading-relaxed">
+        {announcement.content}
+      </p>
+      <div className="mt-3 border-b border-stone-50 group-last:border-none" />
+    </div>
+  );
+}
+
+function DashboardAnnouncementWidget() {
   return (
     <div className="bg-white p-6 rounded-3xl border border-stone-100 shadow-sm">
       <div className="flex items-center justify-between mb-6">
@@ -238,7 +271,35 @@ function AnnouncementWidget() {
   );
 }
 
-function RecentActivityWidget() {
+function DashboardRecentActivityItem({ activity }: { activity: Activity }) {
+  return (
+    <div
+      key={activity.id}
+      className="flex space-x-4"
+    >
+      <div className="mt-1">
+        <div className="w-8 h-8 rounded-full bg-stone-50 flex items-center justify-center text-stone-400">
+          <Image
+            src={activity.type === "grade" ? GradeSVG : UploadSVG}
+            alt="Activity Icon"
+            width={20}
+          />
+        </div>
+      </div>
+      <div className="flex-1">
+        <div className="flex justify-between items-start">
+          <h4 className="text-sm font-bold text-stone-800">{activity.title}</h4>
+          <span className="text-[10px] font-semibold text-stone-400">
+            {activity.time}
+          </span>
+        </div>
+        <p className="text-xs text-stone-500 mt-0.5">{activity.detail}</p>
+      </div>
+    </div>
+  );
+}
+
+function DashboardRecentActivityWidget() {
   const { activities, loading } = useAssignmentStore();
 
   if (loading) {
@@ -249,7 +310,6 @@ function RecentActivityWidget() {
     <div className="bg-white p-6 rounded-3xl border border-stone-100 shadow-sm">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-bold text-stone-800">Recent Activity</h3>
-        {/* Updated: Neutral background to let the yellow bolt pop */}
         <span className="bg-stone-50 p-2 rounded-xl border border-stone-100">
           <ActivityIcon size={20} />
         </span>
@@ -258,47 +318,37 @@ function RecentActivityWidget() {
       <div className="space-y-6">
         {activities.length > 0 ? (
           activities.map((activity) => (
-            <div
-              key={activity.id}
-              className="flex space-x-4"
-            >
+            <div key={activity.id} className="flex space-x-4">
               <div className="mt-1">
                 <div className="w-8 h-8 rounded-full bg-stone-50 flex items-center justify-center">
-                  {/* Using the same themed icon for list items */}
                   <ActivityIcon size={16} />
                 </div>
               </div>
               <div className="flex-1">
                 <div className="flex justify-between items-start">
-                  <h4 className="text-sm font-bold text-stone-800">
-                    {activity.title}
-                  </h4>
+                  <h4 className="text-sm font-bold text-stone-800">{activity.title}</h4>
                   <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">
                     {activity.time}
                   </span>
                 </div>
-                <p className="text-xs text-stone-500 mt-0.5">
-                  {activity.detail}
-                </p>
+                <p className="text-xs text-stone-500 mt-0.5">{activity.detail}</p>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-sm text-stone-400 text-center py-4 italic">
-            No recent activity.
-          </p>
+          <p className="text-sm text-stone-400 text-center py-4 italic">No recent activity.</p>
         )}
       </div>
     </div>
   );
 }
 
-function DeadlinesWidget() {
+
+function DashboardDeadlineItem() {
   return (
     <section className="bg-white p-8 rounded-3xl border border-stone-100 shadow-sm sticky top-28">
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-xl font-bold text-stone-800">Deadlines</h3>
-        {/* Updated: Swapped bg-amber-50 for stone-50 to match the new icon set */}
         <div className="w-10 h-10 bg-stone-50 rounded-2xl flex items-center justify-center border border-stone-100">
           <DeadlineIcon size={24} />
         </div>
@@ -357,15 +407,22 @@ export default function DashboardPage() {
           Here&apos;s what&apos;s happening with your courses today.
         </p>
       </div>
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
+        
         <div className="xl:col-span-2 space-y-8">
           <DashboardCourseOverview />
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <AnnouncementWidget />
-            <RecentActivityWidget />
+            <DashboardAnnouncementWidget />
+            <DashboardRecentActivityWidget />
           </div>
         </div>
-        <DeadlinesWidget />
+
+        <aside className="xl:sticky xl:top-8 h-fit">
+          <DashboardDeadlineItem />
+        </aside>
+
       </div>
     </div>
   );
